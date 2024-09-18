@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 
 import User from '../models/userModel.js';
+import generateTokenAndSetCookie from '../utils/helpers/generateTokenAndSetCookie.js';
 
 const signupUser = async (req, res) => {
   try {
@@ -23,6 +24,7 @@ const signupUser = async (req, res) => {
     await newUser.save();
 
     if (newUser) {
+      generateTokenAndSetCookie(newUser._id, res);
       res.status(201).json({
         _id: newUser._id,
         name: newUser.name,
@@ -38,4 +40,79 @@ const signupUser = async (req, res) => {
   }
 };
 
-export { signupUser };
+const loginUser = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const user = await User.findOne({ username });
+
+    const isPasswordCorrect = await bcrypt.compare(
+      password,
+      user?.password || ''
+    );
+    if (!user || !isPasswordCorrect) {
+      return res.status(400).json({ message: 'Invalid username or password' });
+    }
+
+    generateTokenAndSetCookie(user._id, res);
+    res.status(200).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      username: user.username,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+    console.log('Error in login user: ', err.message);
+  }
+};
+
+const logoutUser = async (req, res) => {
+  try {
+    res.cookie('jwt', '', { maxAge: 1 });
+    res.status(200).json({ message: 'User logged out successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+    console.log('Error in logout user: ', err.message);
+  }
+};
+
+const followUnFollowUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userToModify = await User.findById(id);
+    const currentUser = await User.findById(req.user._id);
+
+    if (id.toString() === req.user._id.toString()) {
+      console.log(id, req.user._id);      
+      return res
+        .status(400)
+        .json({ message: 'You cannot follow/unfollow yourself' });
+    }
+
+    if (!userToModify || !currentUser) {
+      return res.status(400).json({ message: 'User not found' });
+    }
+
+    const isFollowing = currentUser.following.includes(id);
+
+    if (isFollowing) {
+      await User.findByIdAndUpdate(req.user._id, { $pull: { following: id } });
+      await User.findByIdAndUpdate(id, {
+        $pull: { followers: req.user._id },
+      });
+      res.status(200).json({ message: 'User unfollowed successfully' });
+    } else {
+      await User.findByIdAndUpdate(req.user._id, { $push: { following: id } });
+      await User.findByIdAndUpdate(id, {
+        $push: { followers: req.user._id },
+      });
+      res.status(200).json({ message: 'User followed successfully' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: err.message });
+    console.log('Error in followUnFollow user: ', err.message);
+  }
+};
+
+
+export { signupUser, loginUser, logoutUser, followUnFollowUser };
