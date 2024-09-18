@@ -5,6 +5,7 @@ import {
   loginUser,
   logoutUser,
   followUnFollowUser,
+  updateUser,
 } from '../controllers/userController.js';
 
 import protectRoute from '../middleware/protectRoute.js';
@@ -18,5 +19,7 @@ router.post('/login', loginUser);
 router.post('/logout', logoutUser);
 
 router.post('/follow/:id', protectRoute, followUnFollowUser);
+
+router.post('/update/:id', protectRoute, updateUser);
 
 export default router;
