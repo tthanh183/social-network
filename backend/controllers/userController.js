@@ -10,7 +10,7 @@ const getUserProfile = async (req, res) => {
       .select('-password')
       .select('-updatedAt');
     if (!user) {
-      return res.status(400).json({ message: 'User not found' });
+      return res.status(404).json({ message: 'User not found' });
     }
     res.status(200).json(user);
   } catch (err) {
