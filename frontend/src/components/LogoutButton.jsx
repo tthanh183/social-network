@@ -3,10 +3,12 @@ import { useSetRecoilState } from 'recoil';
 import userAtom from '../atoms/userAtom';
 import { HiOutlineLogout } from 'react-icons/hi';
 import useShowToast from '../hooks/useShowToast.js';
+import { useNavigate } from 'react-router-dom';
 
 const LogoutButton = () => {
   const setUser = useSetRecoilState(userAtom);
   const showToast = useShowToast();
+  const navigate = useNavigate();
   const handleLogout = async () => {
     try {
       const res = await fetch('/api/users/logout', {
@@ -16,7 +18,6 @@ const LogoutButton = () => {
         },
       });
       const data = await res.json();
-      console.log(data);
       if (data.error) {
         showToast('Error', data.error, 'error');
         return;
@@ -24,6 +25,7 @@ const LogoutButton = () => {
 
       localStorage.removeItem('user-threads');
       setUser(null);
+      navigate('/');
     } catch (error) {
       showToast('Error', error, 'error');
     }
@@ -36,7 +38,7 @@ const LogoutButton = () => {
       size={'sm'}
       onClick={handleLogout}
     >
-      <HiOutlineLogout size={20}/>
+      <HiOutlineLogout size={20} />
     </Button>
   );
 };
