@@ -1,11 +1,11 @@
 import User from '../models/userModel.js';
 import Post from '../models/postModel.js';
-import {v2 as cloudinary} from 'cloudinary';
+import { v2 as cloudinary } from 'cloudinary';
 
 const createPost = async (req, res) => {
   try {
     const { postedBy, text } = req.body;
-    let {img} = req.body
+    let { img } = req.body;
     if (!postedBy || !text) {
       return res.status(400).json({ error: 'Postedby and text are required' });
     }
@@ -146,7 +146,7 @@ const getFeedPosts = async (req, res) => {
       createdAt: -1,
     });
 
-    res.status(200).json({ feedPosts });
+    res.status(200).json(feedPosts);
   } catch (err) {
     res.status(500).json({ error: err.message });
     console.log('Error in replyToPost: ', err.message);
