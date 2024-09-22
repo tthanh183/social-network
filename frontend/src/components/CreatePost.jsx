@@ -15,7 +15,6 @@ import {
   ModalOverlay,
   Text,
   Textarea,
-  useColorMode,
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
@@ -24,7 +23,6 @@ import usePreviewImage from '../hooks/usePreviewImage';
 import { BsFillImageFill } from 'react-icons/bs';
 import { useRecoilValue } from 'recoil';
 import userAtom from '../atoms/userAtom';
-import { text } from 'framer-motion/client';
 import useShowToast from '../hooks/useShowToast';
 
 const MAX_CHAR = 500;
