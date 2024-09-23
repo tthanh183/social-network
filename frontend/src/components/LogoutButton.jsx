@@ -1,7 +1,6 @@
 import { Button } from '@chakra-ui/react';
 import { useSetRecoilState } from 'recoil';
 import userAtom from '../atoms/userAtom';
-import { HiOutlineLogout } from 'react-icons/hi';
 import useShowToast from '../hooks/useShowToast.js';
 import { useNavigate } from 'react-router-dom';
 import { FiLogOut } from 'react-icons/fi';
