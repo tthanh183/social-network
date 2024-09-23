@@ -35,7 +35,7 @@ const createPost = async (req, res) => {
 
     await newPost.save();
 
-    res.status(201).json({ message: 'Post created successfully', newPost });
+    res.status(201).json(newPost);
   } catch (err) {
     res.status(500).json({ error: err.message });
     console.log('Error in createPost: ', err.message);
@@ -72,7 +72,7 @@ const deletePost = async (req, res) => {
       const imgId = post.img.split('/').pop().split('.')[0];
       await cloudinary.uploader.destroy(imgId);
     }
-    
+
     await Post.findByIdAndDelete(req.params.id);
 
     res.status(200).json({ message: 'Post deleted successfully' });
@@ -130,7 +130,7 @@ const replyToPost = async (req, res) => {
     post.replies.push(reply);
 
     await post.save();
-    res.status(200).json({ message: 'Reply added successfully', post });
+    res.status(200).json(reply);
   } catch (err) {
     res.status(500).json({ error: err.message });
     console.log('Error in replyToPost: ', err.message);
