@@ -73,6 +73,12 @@ const getConversations = async (req, res) => {
       participants: userId,
     }).populate({ path: 'participants', select: 'username profilePic' });
 
+    conversations.forEach(conversation => {
+      conversation.participants = conversation.participants.filter(
+        participant => participant._id.toString() !== userId.toString()
+      );
+    });
+
     res.status(200).json(conversations);
   } catch (err) {
     res.status(500).json({ error: err.message });
