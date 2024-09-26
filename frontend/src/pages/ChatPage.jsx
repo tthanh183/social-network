@@ -19,7 +19,8 @@ import {
   selectedConversationAtom,
 } from '../atoms/messagesAtom';
 import { GiConversation } from 'react-icons/gi';
-import userAtom from '../atoms/userAtom';
+import userAtom from '../atoms/userAtom.js';
+import { useSocket } from '../context/SocketContext';
 
 const ChatPage = () => {
   const [searchText, setSearchText] = useState('');
@@ -31,6 +32,7 @@ const ChatPage = () => {
   );
   const currentUser = useRecoilValue(userAtom);
   const showToast = useShowToast();
+  const { socket, onlineUsers } = useSocket();
 
   useEffect(() => {
     const getConversations = async () => {
@@ -183,6 +185,9 @@ const ChatPage = () => {
             conversations.map(conversation => (
               <Conversation
                 key={conversation._id}
+                isOnline={onlineUsers.includes(
+                  conversation.participants[0]._id
+                )}
                 conversation={conversation}
               />
             ))}
